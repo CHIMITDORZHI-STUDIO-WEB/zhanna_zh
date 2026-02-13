@@ -424,7 +424,7 @@
             background: linear-gradient(160deg, rgba(198,168,124,0.08) 0%, var(--btn-bg) 40%);
             border: 1px solid rgba(198,168,124,0.12);
             border-radius: 18px;
-            padding: 22px 10px 18px;
+            padding: 24px 10px 20px;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -446,49 +446,14 @@
             box-shadow: 0 12px 30px rgba(0,0,0,0.3), 0 0 20px rgba(198,168,124,0.08);
         }
 
-        .ring-wrap {
-            width: 56px;
-            height: 56px;
-            margin: 0 auto 10px;
-            position: relative;
-        }
-
-        .ring-wrap svg {
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
-        }
-
-        .ring-bg {
-            fill: none;
-            stroke: rgba(198,168,124,0.1);
-            stroke-width: 3;
-        }
-
-        .ring-progress {
-            fill: none;
-            stroke: url(#goldGrad);
-            stroke-width: 3;
-            stroke-linecap: round;
-            stroke-dasharray: 150.8;
-            stroke-dashoffset: 150.8;
-            transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .ring-progress.animate {
-            stroke-dashoffset: var(--ring-offset);
-        }
-
-        .ring-value {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .stat-number {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 16px;
+            font-size: 28px;
             font-weight: 700;
             color: #fff;
+            display: block;
+            line-height: 1;
+            margin-bottom: 8px;
         }
 
         .stat-label {
@@ -687,15 +652,6 @@
         <div class="particle"></div>
     </div>
 
-    <!-- SVG defs for ring gradients -->
-    <svg width="0" height="0" style="position:absolute">
-        <defs>
-            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#dcc49e"/>
-                <stop offset="100%" stop-color="#c6a87c"/>
-            </linearGradient>
-        </defs>
-    </svg>
 
     <div class="container">
         <div class="corner corner-tl"></div>
@@ -755,36 +711,18 @@
             </ul>
         </div>
 
-        <!-- Stats with progress rings & animated counters -->
+        <!-- Stats with animated counters -->
         <div class="stats fade-in">
             <div class="stat-item">
-                <div class="ring-wrap">
-                    <svg viewBox="0 0 56 56">
-                        <circle class="ring-bg" cx="28" cy="28" r="24"/>
-                        <circle class="ring-progress" cx="28" cy="28" r="24" style="--ring-offset: 44.5"/>
-                    </svg>
-                    <span class="ring-value" data-target="7" data-suffix="+">0</span>
-                </div>
+                <span class="stat-number" data-target="7" data-suffix="">0</span>
                 <span class="stat-label">Лет опыта</span>
             </div>
             <div class="stat-item">
-                <div class="ring-wrap">
-                    <svg viewBox="0 0 56 56">
-                        <circle class="ring-bg" cx="28" cy="28" r="24"/>
-                        <circle class="ring-progress" cx="28" cy="28" r="24" style="--ring-offset: 15.1"/>
-                    </svg>
-                    <span class="ring-value" data-target="1000" data-suffix="+">0</span>
-                </div>
+                <span class="stat-number" data-target="1000" data-suffix="" data-prefix="от ">0</span>
                 <span class="stat-label">Гостей</span>
             </div>
             <div class="stat-item">
-                <div class="ring-wrap">
-                    <svg viewBox="0 0 56 56">
-                        <circle class="ring-bg" cx="28" cy="28" r="24"/>
-                        <circle class="ring-progress" cx="28" cy="28" r="24" style="--ring-offset: 0"/>
-                    </svg>
-                    <span class="ring-value" data-target="0" data-suffix="" data-text="PRO">PRO</span>
-                </div>
+                <span class="stat-number" data-target="0" data-text="PRO">PRO</span>
                 <span class="stat-label">Уровень</span>
             </div>
         </div>
@@ -809,7 +747,7 @@
             <svg class="chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         </a>
 
-        <a href="mailto:zhannazhalsapova@icloud.com" class="link-btn fade-in">
+        <a href="/cdn-cgi/l/email-protection#cab0a2aba4a4abb0a2aba6b9abbaa5bcab8aa3a9a6a5bfaee4a9a5a7" class="link-btn fade-in">
             <div class="icon-wrap icon-email"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div>
             <div class="btn-text">
                 <span class="btn-title">Email</span>
@@ -843,7 +781,50 @@
         </div>
     </div>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script>
+        // Animated counters + ring animation
+        function animateStats() {
+            document.querySelectorAll('.stat-number').forEach(el => {
+                const target = parseInt(el.dataset.target);
+                const suffix = el.dataset.suffix || '';
+                const prefix = el.dataset.prefix || '';
+                const text = el.dataset.text;
+                if (text) return;
+
+                const duration = target > 100 ? 2000 : 1500;
+                const start = performance.now();
+
+                function update(now) {
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    const current = Math.round(eased * target);
+                    el.textContent = prefix + current + suffix;
+                    if (progress < 1) requestAnimationFrame(update);
+                }
+                requestAnimationFrame(update);
+            });
+        }
+
+        // Trigger on load with small delay for fade-in animations
+        window.addEventListener('load', function() {
+            setTimeout(animateStats, 800);
+        });
+
+        // Also try IntersectionObserver for scroll
+        if ('IntersectionObserver' in window) {
+            var obs = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        animateStats();
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            var s = document.querySelector('.stats');
+            if (s) obs.observe(s);
+        }
+    </script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // Animated counters + ring animation on scroll into view
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -856,6 +837,7 @@
                     entry.target.querySelectorAll('.ring-value').forEach(el => {
                         const target = parseInt(el.dataset.target);
                         const suffix = el.dataset.suffix || '';
+                        const prefix = el.dataset.prefix || '';
                         const text = el.dataset.text;
                         if (text) return; // skip "PRO"
 
@@ -868,11 +850,6 @@
                             // Ease out cubic
                             const eased = 1 - Math.pow(1 - progress, 3);
                             const current = Math.round(eased * target);
-                            el.textContent = current + suffix;
+                            el.textContent = prefix + current + suffix;
                             if (progress < 1) requestAnimationFrame(update);
-                        }
-                        requestAnimationFrame(update);
-                    });
-                    observer.unobserve(entry.target);
-                }
-   
+                      
